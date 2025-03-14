@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% load static %}
+{% load common_tags %}
+{% block title %}Thanh toán{%endblock %}
+{% block content %}
+
+<div class="container mt-5 pt-5">
+    <div class="col-12">
+        <h1 class="h2">Địa chỉ vận chuyển</h1>
+    </div>
+    <div class="col-12">
+        <p>Vui lòng chọn địa chỉ giao hàng của bạn</p>
+    </div>
+    <hr/>
+</div>
+
+
+<div class="container">
+    <div class="row g-3">
+        {% if addresses|length == 0 %}
+            <div class="col-12">Không có địa chỉ giao hàng, <a href="{% url 'account:add_address' %}">Thêm địa chỉ</a></div>
+        {% else %}
+        <div class="col-md-4 col-lg-4 order-md-last p-0 order-3">
+
+            <div class="d-flex bd-highlight ms-0">
+                <div class="p-2 flex-grow-1 bd-highlight">Tổng tiền sản phẩm:</div>
+                <div class="p-2 bd-highlight">
+                    <span id="sub_total" class="fw-bold h5">{{basket.get_subtotal_price|currency}}</span>
+                </div>
+            </div>
+            <div class="d-flex bd-highlight">
+                <div class="p-2 flex-grow-1 bd-highlight">Phí vận chuyển:</div>
+                <div class="p-2 bd-highlight">
+                    <span id="delivery_price" class="fw-bold h5">{{basket.get_delivery_price|currency}}</span>
+                </div>
+            </div>
+            <div class="d-flex bd-highlight">
+                <div class="p-2 flex-grow-1 bd-highlight">Tổng tiền thanh toán:</div>
+                <div class="p-2 bd-highlight">
+                    <span id="total" class="fw-bold h5 text-danger">{{basket.get_total_price|currency}}</span>
+                </div>
+            </div>
+            <div id="paypal-button-container" class="mt-2"></div>
+        </div>
+
+        <div class="col-md-7 col-lg-8">
+            {% for address in addresses %}
+                {% if not address.default %}
+                <h1 class="h5 pt-4">Địa chỉ khác</h1>
+                {% endif %}
+                <div class="card mb-3 border-1 rounded-0 product-item me-md-4" data-index="{{option.id}}">
+                <div class="row g-0">
+                    <div class="col">
+                        <div class="card pb-3 rounded-0">
+                            <div class="card-header bg-white small text-muted">
+                                {% if address.default %}
+                                Đã chọn làm địa chỉ giao hàng
+                                {% else %}
+                                Địa chỉ phụ
+                                {% endif %}
+                                &nbsp;
+                            </div>
+                            <div class="card-body small pb-1">
+                                <p class="card-text m-0 fw-bold">Tên khách hàng: {{address.full_name}}</p>
+                                <p class="card-text m-0">Địa chỉ 1: {{address.address_line}}</p>
+                                <p class="card-text m-0">Địa chỉ 2: {{address.address_line2}}</p>
+                                <p class="card-text m-0">Thành phố: {{address.town_city}}</p>
+                                <p class="card-text m-0">Mã bưu chính: {{address.postcode}}</p>
+                                <p class="card-text m-0">Số điện thoại: {{address.phone}}</p>
+                                <div class="pt-2">
+                                    <a href="{% url 'account:edit_address' address.id %}" class="text-decoration-none">Sửa</a>
+                                    {% if not address.default %}
+                                    | <a href="{% url 'account:set_default' address.id %}" class="text-decoration-none">Chọn</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script
+        src="https://www.paypal.com/sdk/js?client-id=AQAfFYjRpMU8-YYvcRz3sc7d13iaboZFiAnvuLz67pjVVIiIXYpirEXlbpS6TPKmhzNH0flAflS2u_mZ"
+        data-sdk-integration-source="button-factory">
+</script>
+
+<script>
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            let cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                let cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    let csrftoken = getCookie('csrftoken');
+
+
+    function initPayPalButton() {
+        console.log('initial')
+        paypal.Buttons({
+            style: {
+                shape: 'rect',
+                color: 'gold',
+                layout: 'vertical',
+                label: 'paypal',
+
+            },
+            createOrder: function (data, actions) {
+                return actions.order.create({
+                    purchase_units: [{
+                        "amount": {
+                            "currency_code": "USD",
+                            "value": '{{basket.get_total_price}}'
+                        }
+                    }]
+                });
+            },
+            onApprove: function (data) {
+                let url = "{% url 'checkout:payment_complete' %}"
+                return fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'content-type': 'application/json',
+                        'X-CSRFToken': csrftoken,
+                    },
+                    body: JSON.stringify({
+                        orderID: data.orderID
+                    })
+                }).then(function () {
+                    location.href = '{% url "checkout:payment_successful" %}';
+                })
+            },
+        }).render('#paypal-button-container');
+    }
+
+    initPayPalButton();
+
+</script>
+{% endblock %}

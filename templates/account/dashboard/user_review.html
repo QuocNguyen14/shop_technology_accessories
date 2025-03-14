@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Review</title>
+</head>
+<body>
+    <h1>Product Review - {{ product.name }}</h1>
+    
+    <h2>Add a Review</h2>
+    <form method="post" action="{% url 'product_review' product_id=product.id %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Submit Review</button>
+    </form>
+
+    
+    <h2>Existing Reviews</h2>
+    {% for review in product.reviews.all %}
+        <p>{{ review.user.username }} - {{ review.date }}</p>
+        <p>{{ review.text }}</p>
+    {% empty %}
+        <p>No reviews yet.</p>
+    {% endfor %}
+</body>
+</html>

@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load common_tags %}
+
+{% block stylesheet %}{% static 'css/index.css' %}{% endblock %}
+
+{% block title %}Trang chủ{% endblock %}
+{% block content %}
+
+<!-- header -->
+<div class="hero-banner">
+    <div class="content">
+        <div class="text-content col-12 col-xl-6 p-30">
+            <h1>SALES</h1>
+            <p> Convallis interdum purus adipiscing dis parturient
+                posuere ac a quam a eleifend montes parturient posuere
+                curae tempor
+            </p>
+            <div class="more">
+                <div class="banner-more">Read More</div>
+                <div class="banner-more shop">Shop Now</div>
+            </div>
+        </div>
+        <img class="banner-img col-12 col-xl-6" src="/media/images/banner-img.png" alt=""/>
+    </div>
+</div>
+
+<div class="container px-0">
+    <!-- category -->
+    <div class="shop-by-category">
+        <div class="categories">
+            <a class="category" href="">
+                <img src="media/images/cat-1.jpg" alt=""/>
+            </a>
+            <div class="category">
+                <img src="media/images/cat-2.jpg" alt=""/>
+            </div>
+            <div class="category">
+                <img src="media/images/cat-3.jpg" alt=""/>
+            </div>
+            <div class="category">
+                <img src="media/images/cat-4.jpg" alt=""/>
+            </div>
+
+        </div>
+    </div>
+
+    <!--    products     -->
+    <div class="container px-0">
+        <div class="row">
+            <div class="album py-3">
+                <div class="pb-5">
+                    <h1 class="h4 text-uppercase" style="color: #000 !important;">Sản phẩm phổ biến:</h1>
+                </div>
+                {% if not products %}
+                <div class="col-12">Hiện tại không có sản phẩm nào đang bán.</div>
+                {% else %}
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-5 g-3 bg-white">
+                    {% for product in products %}
+                    <div class="col p-item p-3 mt-0">
+                        <div class="card border-0">
+                            {% for image in product.product_image.all %}
+                            {% if image.is_feature%}
+                            <img class="img-fluid" src="{{ image.image.url }}"
+                                 style="height: 150px !important; object-fit: contain"
+                                 alt="{{ image.image.alt_text }}">
+                            {% endif %}
+                            {% endfor %}
+                            <div class="card-body px-2 pb-0">
+                                <p class="card-text" style="min-height: 48px">
+                                    <a class="text-decoration-none name-product p-name"
+                                       href="{{ product.get_absolute_url }}">{{ product.title }}</a>
+                                </p>
+                                <span class="fw-bold text-danger">{{ product.regular_price|subtract:product.discount_price|currency }}</span>
+                                {% if product.discount_price > 0%}
+                                    <span class="p-old-price" style="margin-left: 4px">{{product.regular_price|currency}}</span>
+                                {% endif %}
+                                <span class="p-discount icons">-{{product.regular_price|percentReduce:product.discount_price}}%</span>
+                                <div class="p-bottom"><span class="p-buy icons"
+                                                            onclick="listenBuyProduct(18064,0,1)"></span></div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <nav aria-label="Page navigation example">
+            <ul class="pagination pull-right">
+                <span class="current-page d-flex align-items-center text-dark fw-bold" style="padding-right: 16px">
+                    Trang {{ products.number }}/{{ products.paginator.num_pages }}
+                </span>
+                {% if products.has_previous %}
+                <li class="page-item">
+                    <a href="?page=1" class="page-link">&laquo; Trang đầu</a>
+                </li>
+                <li class="page-item">
+                    <a href="?page={{ products.previous_page_number }}" class="page-link">Trang trước</a>
+                </li>
+                {% endif %}
+
+                {% for i in products.paginator.page_range %}
+                {% if i == products.number %}
+                <li class="page-item disabled">
+                    <span class="current-page page-link">{{ i }}</span>
+                </li>
+                {% elif i > products.number|add:'-3' and i < products.number|add:'3' %}
+                <li class="page-item">
+                    <a href="?page={{ i }}" class="page-link">{{ i }}</a>
+                </li>
+                {% endif %}
+                {% endfor %}
+
+                {% if products.has_next %}
+                <li class="page-item">
+                    <a href="?page={{ products.next_page_number }}" class="page-link">Trang kế</a>
+                </li>
+                <li class="page-item">
+                    <a href="?page={{ products.paginator.num_pages }}" class="page-link">Trang cuối &raquo;</a>
+                </li>
+                {% endif %}
+            </ul>
+
+        </nav>
+    </div>
+</div>
+{% endblock %}

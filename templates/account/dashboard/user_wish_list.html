@@ -1,0 +1,43 @@
+{% extends "../sub_base.html" %}
+{% load common_tags %}
+{% block title %}Danh sách ưa thích{% endblock %}
+
+{% block sub_content %}
+<div class="col-12 mx-auto">
+  <h1 class="h3">Danh sách yêu thích</h1>
+  <div class="fw-bold">Quản lý danh sách yêu thích</div>
+  <hr />
+
+  {% if wishlist %}
+  {% for product in wishlist  %}
+
+  <div class="card mb-3 rounded-0">
+    <div class="row g-0">
+      <div class="col-md-2">
+        {% for image in product.product_image.all  %}
+          {% if image.is_feature %}
+          <img class="img-fluid d-block p-2" width="100%" src="{{ image.image.url }}"
+            alt="{{ image.image.alt_text }}" />
+          {% endif %}
+        {% endfor %}
+      </div>
+      <div class="col-md-10">
+        <div class="card-body">
+          <h5 class="card-title">{{product.title}}</h5>
+          <p class="card-text">Mô tả: {{product.description}}</p>
+          <p class="card-text fw-bold text-danger"><small>Giá sản phẩm: {{product.regular_price|currency}}</small></p>
+          <a type="button" class="btn btn-primary fw500 btn-sm" href="{% url 'account:user_wishlist' product.id %}">Xoá khỏi danh sách ưa thích</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% endfor %}
+  {% else %}
+  <p class="card-text">Chưa có sản phẩm nào được thêm vào danh sách yêu thích của bạn</p>
+  {% endif %}
+
+
+
+</div>
+{% endblock %}

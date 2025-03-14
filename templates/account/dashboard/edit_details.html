@@ -1,0 +1,34 @@
+{% extends "../sub_base.html" %}
+{% block title %}Tài khoản{% endblock %}
+{% block sub_content %}
+
+<div class="col-6 mx-auto mt-3">
+    <form class="account-form" method="post" enctype="multipart/form-data">
+        {% if user_form.is_valid and profile_form.is_valid %}
+        <div class="alert alert-primary" role="alert">
+            Thông tin chi tiết được cập nhật thành công!
+        </div>
+        <p class="small text-center pt-0">
+            <a href="{% url 'account:dashboard' %}">Quay lại trang quản lý tài khoản</a>
+        </p>
+        {%else%}
+        <h3>Thay đổi tài khoản của bạn</h3>
+        <p>Bạn có thể chỉnh sửa tài khoản của mình bằng biểu mẫu sau:</p>
+        {% endif %}
+        {% if form.errors %}
+        <div class="alert alert-primary" role="alert">
+            Lỗi, Vui lòng thử lại !
+        </div>
+        {% endif %}
+        {% csrf_token %}
+        <label class="small font-weight-bold mb-2">{{ user_form.email.label}}</label>
+        {{ user_form.email }}
+        <label class="small font-weight-bold mb-2">{{ user_form.name.label}}</label>
+        {{ user_form.name }}
+        <button class="btn btn-primary btn-block py-2 mb-4 mt-3 fw-bold w-100" type="submit" value="Save changes">
+            Lưu thay đổi
+        </button>
+    </form>
+</div>
+
+{% endblock %}

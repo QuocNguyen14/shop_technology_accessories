@@ -1,0 +1,65 @@
+{% extends "../sub_base.html" %}
+{% load static %}
+{% block title %}Đăng ký{% endblock %}
+{% block stylesheet %}{% static '/css/register.css' %}{% endblock %}
+{% block sub_content %}
+
+<section class="">
+    <div class="container-fluid h-custom">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-md-9 col-lg-6 col-xl-5">
+                <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp"
+                     class="img-fluid" alt="Sample image">
+            </div>
+
+            <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
+                <form class="account-form mt-5" action="." method="post">
+                    {% csrf_token %}
+                    <h3 class="mb-2 text-center">Đăng ký tài khoản</h3>
+                    <p class="mb-4 text-center">Nó miễn phí và chỉ mất một vài phút.</p>
+
+                    {% if form.errors %}
+                    <p>Vui lòng chỉnh sửa lại các lỗi sau:</p>
+                    {% for field in form %}
+                    {% if field.errors %}
+                    <div class="alert alert-primary" role="alert">
+                        {{ field.label }}: {{ field.errors|striptags }}
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                    {% endif %}
+
+                    <label>
+                        {{ form.name.label }}
+                        <span class="text-muted small">(Bắt buộc)</span>
+                    </label>
+                    {{ form.name }}
+                    <label>
+                        {{ form.email.label}}
+                        <span class="text-muted small">(Bắt buộc)</span>
+                    </label>
+                    {{ form.email }}
+                    <label>
+                        {{ form.password.label}}
+                        <span class="text-muted mb-4"></span>
+                    </label>
+                    <small class="form-text text-muted mb-4 small">
+                        Ít nhất 8 ký tự và 1 chữ số
+                    </small>
+                    {{ form.password }}
+                    <label>{{ form.password2.label}}
+                        <span class="text-muted small">(Bắt buộc)</span>
+                    </label>
+                    {{ form.password2 }}
+
+                    <button class="btn btn-primary btn-block py-2 my-4 fw500 w-100" type="submit">Đăng ký</button>
+
+                    <p class="small fw-bold m-0 text-center">
+                        <a href="{% url 'account:login' %}" class="link-danger">Bạn đã có tài khoản?</a>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

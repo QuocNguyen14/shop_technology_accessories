@@ -1,0 +1,53 @@
+{% extends "../sub_base.html" %}
+{% block title %}Địa chỉ{% endblock %}
+
+{% block sub_content %}
+<div class="col-6 mx-auto">
+    {% if is_add %}
+        <h1 class="h3">Thêm địa chỉ mới</h1>
+        <div>Thêm địa chỉ vận chuyển mới</div>
+    {% else %}
+        <h1 class="h3">Sửa địa chỉ</h1>
+        <div>Sửa địa chỉ vận chuyển</div>
+    {% endif %}
+    <hr/>
+    <form name="address_form" class="account-form" method="post" enctype="multipart/form-data">
+        {% if form.errors %}
+        <div class="alert alert-primary" role="alert">
+            Lỗi, vui lòng thử lại!
+        </div>
+        {% endif %}
+        {% csrf_token %}
+        <label class="small fw-bold">Tên người nhận</label>
+        {{ form.full_name }}
+        <label class="small fw-bold">Số điện thoại</label>
+        {{ form.phone }}
+        <label class="small fw-bold">Địa chỉ 1</label>
+        {{ form.address_line }}
+        <label class="small fw-bold">Địa chỉ 2</label>
+        {{ form.address_line2 }}
+        <label class="small fw-bold">Thành phố</label>
+        {{ form.town_city }}
+        <label class="small fw-bold">Mã bưu chính</label>
+        {{ form.postcode }}
+        <button class="btn btn-primary btn-block py-2 mb-4 mt-4 fw-bold w-100" type="button" value="Submit"
+                onclick="submitForm()">
+            {% if is_add %}
+                Thêm địa chỉ
+            {% else %}
+                Cập nhật
+            {% endif %}
+        </button>
+    </form>
+
+</div>
+
+<script>
+    function submitForm() {
+        let form = document.getElementsByName('address_form')[0];
+        form.submit(); // Submit the form
+        form.reset();  // Reset all form data
+        return false; // Prevent page refresh
+    }
+</script>
+{% endblock %}

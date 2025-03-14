@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Payment Successful{%endblock %}
+{% block content %}
+
+<div class="container mt-5 pt-5 text-center">
+    <div class="col-12">
+        <h1 class="h2">Thanh toán thành công</h1>
+    </div>
+    <div class="col-12">
+        <img src="/media/images/success.png" alt="" width="200px">
+    </div>
+    <div class="col-12 my-3 fw-bold">
+        Cảm ơn quý khách đã tin tưởng và lựa chọn chúng tôi.
+    </div>
+    <div class="col-12">
+        <p>Xem lịch sử đặt hàng <a href="{% url 'account:user_orders'%}">Click vào đây để xem chi tiết</a></p>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,155 @@
+/* Bootstrap Over-ride */
+@media (min-width: 1000px){
+    .container{
+        max-width: 1250px;
+        padding: 0 50px;
+    }
+}
+@media (max-width: 1200px){
+    .container{
+        max-width: 100%;
+        padding:0 24px;
+    }
+}
+.dropdown-toggle::after {
+    display: none;
+}
+.dropdown-menu{
+    top:45px;
+    left:0px;
+    padding:10px;
+    border-radius: 5px !important;
+
+    box-shadow: 0 0 10px 0 #b5b5b5;
+}
+.border-top{
+    border-top: solid 1px #eee;
+}   
+
+.alert-primary{
+    background-color: #E4F1FF;
+}
+.margin-right-10{
+    margin-right: 10%!important;
+}
+
+/* Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+body{
+    background: #f5f5f5 !important;
+}
+html, body, p, div{
+    letter-spacing: -0.02px;
+    font-family: 'Roboto', sans-serif;
+}
+.fs12{
+    font-size: 12px;
+}
+.fs15{
+    font-size: 0.9375rem;
+}
+
+.fw300{
+    font-weight: 300;
+}
+.fw500{
+    font-weight: 500;
+}
+
+
+/* Navigation-Main*/
+
+/* xs */
+.logo {
+    width: 49px;
+    height: auto;
+}
+/* sm */
+@media (min-width: 768px) {
+    .logo {
+        width: 49px;
+    }
+}
+/* md */
+@media (min-width: 992px) {
+    .logo {
+        width: 60px;
+    }
+}
+/* lg */
+@media (min-width: 1200px) {
+    .logo {
+        width: 70px;
+    }
+}
+
+/* Basket Menu */
+
+.basket-qty{
+    color: #fff;
+    background: #d42114;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    text-align: center;
+    font-size: 11px;
+    height: 15px;
+    width: 14px;
+    position: absolute;
+    box-sizing: content-box;
+    font-weight: 600;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 1px;
+    right: 10px;
+}
+
+.basket-btn{
+    position: relative;
+}
+
+.basket-btn:hover, .basket-btn:focus, .basket-btn:active, .basket-btn.active{
+    color:#d42114;
+    transition-duration: 0.4s;
+    background-color: #fff;
+}
+
+
+/* Footer */
+ .company-info{
+    font-size: 16px;
+    margin-top: 20px;
+}
+.icons.icon-payment {
+    width: 243px;
+    height: 32px;
+    background-position: -31px -58px;
+}
+.icons {
+    display: inline-block;
+    background-image: url(../../media/images/sprite.png);
+    background-repeat: no-repeat;
+    vertical-align: middle;
+}
+.bf-space {
+    margin-left: 4px;
+    
+}
+.text-grey{
+    color: #6c757d !important;
+}
+.footer > div > div > ul > li{
+    padding-bottom:8px;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}

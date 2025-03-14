@@ -1,0 +1,9 @@
+{% autoescape off %}
+Xin chào {{ user.name }},
+
+Tài khoản của bạn đã được tạo thành công.
+
+Vui lòng nhấp vào liên kết bên dưới để kích hoạt tài khoản của bạn
+
+http://{{ domain }}{% url 'account:activate' uidb64=uid token=token %}
+{% endautoescape %}

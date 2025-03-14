@@ -1,0 +1,408 @@
+{% extends "base.html" %}
+{% load static %}
+{% load common_tags %}
+
+{% block stylesheet %}{% static '/css/store.css' %}{% endblock %}
+{% block title %}
+{% if product %}{{ product.title }}{% else %}Chi tiết{% endif %}
+{% endblock %}
+{% block content %}
+
+
+<div class=" container" style="margin-top: 100px;">
+    {% if messages %}
+    <div class="alert alert-warning" alert-{{ message.tags }} role="alert">
+        {% for message in messages %}
+        {{message|safe}} - <a href="{% url 'account:wishlist' %}" class="alert-link">Danh sách yêu thích</a>.
+        {% endfor %}
+    </div>
+    {% endif %}
+    <div class="mb-3 pb-3 row bg-white ">
+        <h1 class="h3 pe-4 py-4">{{ product.title }}</h1>
+        <div class="col-sm-12 col-md-5">
+            <div id="product-top-left">
+                <div id="img-detail">
+                    <div id="img-large">
+                        {% for image in product.product_image.all %}
+                        {% if image.is_feature %}
+                        <a data-fancybox="gallery" href="{{ image.image.url }}">
+                            <img src="{{ image.image.url }}" alt="{{ image.image.alt_text }}"
+                                 style="height: 320px;width:100%; object-fit: contain">
+                            <p class="view-album"><i class="fa fa-picture-o" aria-hidden="true"></i> Click xem album ảnh
+                                lớn
+                            </p>
+                        </a>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div id="img-thumbs">
+                        <div class=" owl-carousel owl-theme owl-loaded owl-drag">
+                            <div class="owl-stage-outer">
+                                <div class="owl-stage"
+                                     style="transform: translate3d(0px, 0px, 0px); transition: all 0.25s ease 0s; width: 402px;">
+                                    {% for image in product.product_image.all %}
+
+                                    <div class="owl-item" style="width: 50px; margin-right: 5px;">
+                                        <div class="item">
+                                            <a href="{{ image.image.url }}">
+                                                <img src="{{ image.image.url }}" alt="{{ image.image.alt_text }}">
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="owl-nav">
+                                <button type="button" role="presentation" class="owl-prev disabled"><span
+                                        class="fa fa-chevron-left"></span></button>
+                                <button type="button" role="presentation"
+                                        class="owl-next"><span class="fa fa-chevron-right"></span></button>
+                            </div>
+                            <div class="owl-dots disabled"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-7 position-relative ">
+
+            <div class="d-grid gap-2">
+                <div class="d-flex d-flex-inline justify-content-between">
+                    <div>
+                        {% if product.discount_price > 0%}
+                        <span class="h5">
+                              Giá chính hãng:
+                              <span class="h5"
+                                    style="text-decoration: line-through;">{{ product.regular_price|currency }}</span>
+                            </span>
+                        <br>
+                        {% endif %}
+                        <div class="my-1">
+                          <span class="h5">
+                          Giá bán:
+                          <span class="text-danger h4">{{ product.regular_price|subtract:product.discount_price|currency }}</span>
+                        </span>
+                        </div>
+                        <p class="text-muted">Giá đã bao gồm thuế</p>
+                    </div>
+                    <div>
+                        <label for="quantity-product">Số lượng:</label>
+                        <button class="change-quantity" data-type="sub">-</button>
+                        <input type="number" id="quantity-product" value="1"
+                               style="width: 45px; text-align: center">
+                        <button class="change-quantity" data-type="add">+</button>
+                    </div>
+                </div>
+                <hr class="my-1">
+                <ul style="list-style: none; padding-left: 0 !important;">
+                    {% for description in descriptions %}
+                    <li>{{ description }}</li>
+                    {% endfor %}
+                </ul>
+                <button type="button" id="add-button" value="{{product.id}}" class="btn btn-success fw500">
+                    Thêm vào giỏ hàng
+                </button>
+                <a href="{% url 'account:user_wishlist' product.id  %}" class="btn btn-light fw500" role="button"
+                   aria-disabled="true">
+                    Thêm vào danh sách ưa thích
+                </a>
+            </div>
+
+            <div class="box-common technical-table mt-3">
+                <div class="title mb-2">Thông số kỹ thuật
+                </div>
+                <div class="content">
+                    <table class="table  table-striped">
+                        <tbody>
+                        {% for specification in product.product_specification.all|slice:":3" %}
+                        <tr>
+                            <td>{{specification.specification}}</td>
+                            <td>{{specification.value}}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% if product.product_specification.all|length == 0 %}
+                <div>
+                    Đang cập nhật ...
+                </div>
+                {% endif %}
+
+                {% if product.product_specification.all|length > 3 %}
+                <a href="#full-spec" data-fancybox class="viewmore btn red"
+                   style="border: solid 1px #e00;width: 100%;border-radius: 0;">
+                    Xem thêm
+                </a>
+                {% endif %}
+
+                <div class="clearfix"></div>
+
+
+                <div id="full-spec" class="content-text " style="display: none; width: 70%">
+                    <table width="789" class="table table-bordered">
+                        <tbody>
+                        {% for specification in product.product_specification.all %}
+                        <tr>
+                            <td>{{specification.specification}}</td>
+                            <td>{{specification.value}}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <button data-fancybox-close="" class="fancybox-close-small" title="Close"></button>
+                </div>
+            </div>
+
+        </div>
+        <div class="row  ">
+            <div class="col-sm-12 bg-white overflow-hidden">
+                <div class="tab js-tab product-other">
+                    <div class="title-tab">
+                        <span data-tab="#product-similar" class="item js-title-tab active">Sản phẩm tương tự</span>
+                        <span data-tab="#product-same-brand" class="item js-title-tab">Sản phẩm cùng hãng</span>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="js-content-tab " id="product-similar">
+                        <div id="img-product">
+                            <div class="owl-carousel owl-theme owl-loaded owl-drag">
+                                <div class="owl-stage-outer">
+                                    <div class="owl-stage"
+                                         style="transform: translate3d(0px, 0px, 0px); transition: all 0.25s ease 0s; width: 402px;">
+                                        {% for product in products_similar %}
+                                        <div class="owl-item" style="width: 236px;">
+                                            <div class="item p-item">
+                                                <div class="p-container">
+                                                    {% for image in product.product_image.all %}
+                                                    {% if image.is_feature%}
+                                                    <a href="{{ image.image.url }}" class="p-img"><img
+                                                            src="{{ image.image.url }}"
+                                                            alt="Tản nhiệt khí Deepcool Neptwin White">
+                                                    </a>
+                                                    {% endif %}
+                                                    {% endfor %}
+
+                                                    <div class="p-brand-img">
+                                                        <img class="p-brand-img" src="../../media/images/deepcool.png"
+                                                             alt="Deepcool">
+                                                    </div>
+                                                    <h3 class="p-name">
+                                                        <a href="{{ image.image.url }}">
+                                                            {{product.title}}
+                                                        </a>
+                                                    </h3>
+                                                    <span class="fw-bold text-danger">{{ product.regular_price|subtract:product.discount_price|currency }}</span>
+                                                    <span class="p-old-price"
+                                                          style="margin-left: 4px">{{product.regular_price|currency}}</span>
+                                                    <span class="p-discount icons">-{{product.regular_price|percentReduce:product.discount_price}}%</span>
+                                                    <div class="p-bottom">
+                                                    <span class="p-buy icons"
+                                                          onclick="listenBuyProduct(6770,0,1)"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <div class="owl-nav">
+                                    <button type="button" role="presentation" class="owl-prev disabled"><span
+                                            class="fa fa-chevron-left"></span></button>
+                                    <button type="button" role="presentation"
+                                            class="owl-next"><span class="fa fa-chevron-right"></span></button>
+                                </div>
+                                <div class="owl-dots disabled"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="js-content-tab" id="product-same-brand">
+                        <div id="img-product">
+                            <div class="owl-carousel owl-theme owl-loaded owl-drag">
+                                <div class="owl-stage-outer">
+                                    <div class="owl-stage"
+                                         style="transform: translate3d(0px, 0px, 0px); transition: all 0.25s ease 0s; width: 402px;">
+                                        {% for product in products_same_brand %}
+                                        <div class="owl-item" style="width: 236px;">
+                                            <div class="item p-item">
+                                                <div class="p-container">
+                                                    {% for image in product.product_image.all %}
+                                                    {% if image.is_feature%}
+                                                    <a href="{{ image.image.url }}" class="p-img"><img
+                                                            src="{{ image.image.url }}"
+                                                            alt="Tản nhiệt khí Deepcool Neptwin White">
+                                                    </a>
+                                                    {% endif %}
+                                                    {% endfor %}
+
+                                                    <div class="p-brand-img">
+                                                        <img class="p-brand-img" src="../../media/images/deepcool.png"
+                                                             alt="Deepcool">
+                                                    </div>
+                                                    <h3 class="p-name">
+                                                        <a href="{{ image.image.url }}">
+                                                            {{product.title}}
+                                                        </a>
+                                                    </h3>
+                                                    <span class="fw-bold text-danger">{{ product.regular_price|subtract:product.discount_price|currency }}</span>
+                                                    <span class="p-old-price"
+                                                          style="margin-left: 4px">{{product.regular_price|currency}}</span>
+                                                    <span class="p-discount icons">-{{product.regular_price|percentReduce:product.discount_price}}%</span>
+                                                    <div class="p-bottom">
+                                                    <span class="p-buy icons"
+                                                          onclick="listenBuyProduct(6770,0,1)"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <div class="owl-nav">
+                                    <button type="button" role="presentation" class="owl-prev disabled"><span
+                                            class="fa fa-chevron-left"></span></button>
+                                    <button type="button" role="presentation"
+                                            class="owl-next"><span class="fa fa-chevron-right"></span></button>
+                                </div>
+                                <div class="owl-dots disabled"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.js-content-tab').not(':first').hide();
+            $('.js-title-tab').click(function () {
+                var tab = $(this).attr('data-tab');
+                $('.js-content-tab').hide();
+                $(tab).show();
+                $('.js-title-tab').removeClass('active');
+                $(this).addClass('active');
+            });
+        });
+
+
+        $("#img-thumbs .item").click(function () {
+            var src = $(this).find("a").attr("href");
+            $("#img-large a").attr("href", src);
+            $("#img-large img").attr("src", src);
+
+            return false;
+        });
+        $("#img-product .owl-carousel").owlCarousel({
+            items: 5,
+            margin: 2,
+            loop: true,
+            dots: false,
+            nav: true,
+            navText: ['<span class="fa fa-chevron-left"></span>', '<span class="fa fa-chevron-right"></span>'],
+            autoplay: true,
+            autoplayTimeout: 2000,
+            autoplaySpeed: 800
+        });
+        $("#img-thumbs .owl-carousel").owlCarousel({
+            items: 3,
+            margin: 5,
+            dots: false,
+            nav: true,
+            navText: ['<span class="fa fa-chevron-left"></span>', '<span class="fa fa-chevron-right"></span>']
+
+        });
+
+        $("[data-fancybox='gallery'],[data-fancybox='gallery2']").fancybox({
+            thumbs: {
+                autoStart: true,
+            }
+        });
+        $('[data-fancybox]').fancybox({
+            touch: false
+        });
+
+        $(document).ready(function () {
+            $('.js-content-tab').not(':first').hide();
+            $('.js-title-tab').click(function () {
+                var tab = $(this).attr('data-tab');
+                $('.js-content-tab').hide();
+                $(tab).show();
+                $('.js-title-tab').removeClass('active');
+                $(this).addClass('active');
+            });
+        });
+
+
+        $("#img-thumbs .item").click(function () {
+            var src = $(this).find("a").attr("href");
+            $("#img-large a").attr("href", src);
+            $("#img-large img").attr("src", src);
+
+            return false;
+        });
+        $("#img-product .owl-carousel").owlCarousel({
+            items: 5,
+            margin: 2,
+            loop: true,
+            dots: false,
+            nav: true,
+            navText: ['<span class="fa fa-chevron-left"></span>', '<span class="fa fa-chevron-right"></span>'],
+            autoplay: true,
+            autoplayTimeout: 2000,
+            autoplaySpeed: 800
+        });
+        $("#img-thumbs .owl-carousel").owlCarousel({
+            items: 3,
+            margin: 5,
+            dots: false,
+            nav: true,
+            navText: ['<span class="fa fa-chevron-left"></span>', '<span class="fa fa-chevron-right"></span>']
+
+        });
+
+        $("[data-fancybox='gallery'],[data-fancybox='gallery2']").fancybox({
+            thumbs: {
+                autoStart: true,
+            }
+        });
+        $('[data-fancybox]').fancybox({
+            touch: false
+        });
+
+        $(document).on('click', '#add-button', function (e) {
+            e.preventDefault();
+            $.ajax({
+                type: 'POST',
+                url: '{% url "basket:basket_add" %}',
+                data: {
+                    product_id: $('#add-button').val(),
+                    product_qty: $('#quantity-product').val(),
+                    csrfmiddlewaretoken: "{{csrf_token}}",
+                    action: 'post'
+                },
+                success: function (json) {
+                    document.getElementById("basket-qty").innerHTML = json.qty
+                },
+                error: function (xhr, errmsg, err) {
+                }
+            });
+        })
+        // Change quantity
+        $(document).on("click", ".change-quantity", function (e) {
+            e.preventDefault();
+            // lấy id sản phẩm
+            let id = $(this).data("index");
+            // type = add hoặc sub
+            let type = $(this).data("type");
+            // lấy input để lấy số lượng
+            let input = $('#quantity-product');
+            let quantity = type === 'add' ? +input.val() + 1 : +input.val() - 1;
+            quantity === 0 ? input.val(1) : input.val(quantity);
+        });
+    </script>
+
+</div>
+{% endblock %}
